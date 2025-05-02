@@ -5,7 +5,7 @@ from aiogram.fsm.context import FSMContext
 from aiogram.fsm.state import State, StatesGroup
 from aiogram import F
 from aiogram.utils.markdown import hcode
-from ai.gigachat_client import ask_gigachat
+from bot.ai.gigachat_client import ask_gigachat
 
 router = Router()
 

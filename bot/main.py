@@ -5,13 +5,13 @@ from dotenv import load_dotenv
 import asyncio
 import os
 import logging
-from utils.db import init_db
-from handlers.start import router as start_router
-from handlers.topics import router as topics_router
-from handlers.topic_details import router as topic_details_router
-from handlers.ask import router as ask_router
-from handlers.chat import router as chat_router
-from handlers.help import router as help_router
+from bot.utils.db import init_db
+from bot.handlers.start import router as start_router
+from bot.handlers.topics import router as topics_router
+from bot.handlers.topic_details import router as topic_details_router
+from bot.handlers.ask import router as ask_router
+from bot.handlers.chat import router as chat_router
+from bot.handlers.help import router as help_router
 from aiogram.fsm.storage.memory import MemoryStorage
 
 load_dotenv()

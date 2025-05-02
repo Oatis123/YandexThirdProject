@@ -1,0 +1,28 @@
+
+services:
+  db:
+    image: postgres:15
+    restart: always
+    environment:
+      POSTGRES_DB: proghelper
+      POSTGRES_USER: user
+      POSTGRES_PASSWORD: password
+    ports:
+      - "5432:5432"
+    volumes:
+      - pgdata:/var/lib/postgresql/data
+
+  bot:
+    build: .
+    command: ["python", "-m", "bot.main"]
+    environment:
+      BOT_TOKEN: ${BOT_TOKEN}
+      GIGACHAT_TOKEN: ${GIGACHAT_TOKEN}
+      DATABASE_URL: postgresql+asyncpg://user:password@db:5432/proghelper
+    depends_on:
+      - db
+    volumes:
+      - .:/app
+
+volumes:
+  pgdata:
