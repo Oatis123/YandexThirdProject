@@ -1,4 +1,26 @@
+import os
+import aiohttp
 import requests
+
+GIGACHAT_TOKEN = os.getenv("GIGACHAT_TOKEN")
+GIGACHAT_URL = os.getenv("GIGACHAT_URL", "https://gigachat.devices.sberbank.ru/api/v1/chat/completions")
+
+async def ask_gigachat(prompt: str) -> str:
+    headers = {
+        "Authorization": f"Bearer {GIGACHAT_TOKEN}",
+        "Content-Type": "application/json"
+    }
+    data = {
+        "model": "GigaChat",
+        "messages": [
+            {"role": "user", "content": prompt}
+        ],
+        "max_tokens": 512
+    }
+    async with aiohttp.ClientSession() as session:
+        async with session.post(GIGACHAT_URL, headers=headers, json=data) as resp:
+            resp_json = await resp.json()
+            return resp_json["choices"][0]["message"]["content"].strip()
 
 class GigaChatClient:
     def __init__(self, access_token: str, base_url: str = "https://gigachat.devices.sberbank.ru/api/v1/"):

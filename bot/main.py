@@ -1,32 +1,37 @@
-# Папка для обработчиков команд и сообщений
-# handlers/__init__.py
-# handlers/start.py
-# handlers/help.py
-# handlers/topics.py
-# handlers/ask.py
-# handlers/chat.py
-# handlers/topic_details.py
+from aiogram import Bot, Dispatcher
+from aiogram import Router
+from aiogram.types import Message
+from dotenv import load_dotenv
+import asyncio
+import os
+import logging
+from utils.db import init_db
+from handlers.start import router as start_router
+from handlers.topics import router as topics_router
+from handlers.topic_details import router as topic_details_router
+from handlers.ask import router as ask_router
+from handlers.chat import router as chat_router
+from handlers.help import router as help_router
+from aiogram.fsm.storage.memory import MemoryStorage
 
-# Папка для работы с AI
-# ai/__init__.py
-# ai/openai_client.py
-# ai/prompts.py
+load_dotenv()
+TOKEN = os.getenv("BOT_TOKEN")
 
-# Папка с данными по темам
-# data/__init__.py
-# data/topics_data.py
 
-# Папка с клавиатурами
-# keyboards/__init__.py
-# keyboards/main_menu.py
-# keyboards/topics_menu.py
+async def main():
+    logging.basicConfig(level=logging.INFO)
+    await init_db()
+    bot = Bot(token=TOKEN)
+    storage = MemoryStorage()
+    dp = Dispatcher(storage=storage)
+    dp.include_router(start_router)
+    dp.include_router(topics_router)
+    dp.include_router(topic_details_router)
+    dp.include_router(ask_router)
+    dp.include_router(chat_router)
+    dp.include_router(help_router)
+    await dp.start_polling(bot)
 
-# Папка с утилитами
-# utils/__init__.py
-# utils/misc.py
 
-# Файлы конфигурации и логирования
-# config.py
-# logging_config.py
-
-# ...existing code...
+if __name__ == "__main__":
+    asyncio.run(main())

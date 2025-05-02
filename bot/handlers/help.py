@@ -1,9 +1,15 @@
-from aiogram import types
-from aiogram.dispatcher.filters.builtin import CommandHelp
+from aiogram import Router
+from aiogram.types import Message
+from aiogram.filters import Command
 
-from loader import dp
+router = Router()
 
-
-@dp.message_handler(CommandHelp())
-async def bot_help(message: types.Message):
-    await message.answer("This is a help message.")
+@router.message(Command("help"))
+async def help_command(msg: Message):
+    await msg.answer(
+        "/start — Приветствие и краткое объяснение возможностей\n"
+        "/topics — Список доступных тем\n"
+        "/ask — Задать вопрос AI\n"
+        "/chat — Включить свободный чат с AI\n"
+        "/help — Памятка по командам"
+    )
