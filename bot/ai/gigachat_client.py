@@ -1,13 +1,13 @@
 import os
 import aiohttp
-import requests
+from bot.ai.gigachat_token import get_token
 
-GIGACHAT_TOKEN = os.getenv("GIGACHAT_TOKEN")
 GIGACHAT_URL = os.getenv("GIGACHAT_URL", "https://gigachat.devices.sberbank.ru/api/v1/chat/completions")
 
 async def ask_gigachat(prompt: str) -> str:
+    token = get_token()
     headers = {
-        "Authorization": f"Bearer {GIGACHAT_TOKEN}",
+        "Authorization": f"Bearer {token}",
         "Content-Type": "application/json"
     }
     data = {
@@ -18,9 +18,14 @@ async def ask_gigachat(prompt: str) -> str:
         "max_tokens": 512
     }
     async with aiohttp.ClientSession() as session:
-        async with session.post(GIGACHAT_URL, headers=headers, json=data) as resp:
+        async with session.post(GIGACHAT_URL, headers=headers, json=data, ssl=False) as resp:
             resp_json = await resp.json()
-            return resp_json["choices"][0]["message"]["content"].strip()
+            if resp.status != 200:
+                err = resp_json.get('detail') or resp_json.get('message') or str(resp_json)
+                raise Exception(f"GigaChat API error: {err}")
+            if "choices" in resp_json and resp_json["choices"]:
+                return resp_json["choices"][0]["message"]["content"].strip()
+            raise Exception(f"Некорректный ответ от GigaChat: {resp_json}")
 
 class GigaChatClient:
     def __init__(self, access_token: str, base_url: str = "https://gigachat.devices.sberbank.ru/api/v1/"):

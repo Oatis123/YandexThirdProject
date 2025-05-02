@@ -16,6 +16,10 @@ async def chat_command(msg: Message, state: FSMContext):
     await msg.answer("Чат-режим с AI активирован! Можете свободно общаться на тему программирования.\nДля выхода напишите /stopchat.")
     await state.set_state(ChatStates.chatting)
 
+@router.message(lambda m: m.text == "💬 Чат с AI")
+async def chat_keyboard(msg: Message, state: FSMContext):
+    await chat_command(msg, state)
+
 @router.message(Command("stopchat"))
 async def stop_chat(msg: Message, state: FSMContext):
     await msg.answer("Чат-режим с AI завершён.")
