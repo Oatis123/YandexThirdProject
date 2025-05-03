@@ -16,8 +16,8 @@ services:
     build: .
     command: ["python", "-m", "bot.main"]
     environment:
-      BOT_TOKEN: ${BOT_TOKEN}
-      GIGACHAT_TOKEN: ${GIGACHAT_TOKEN}
+      BOT_TOKEN: 7137305536:AAHD2SdGsRhdXa-gzl3anKU1bVTwr-fbegs
+      GIGACHAT_AUTH_KEY: MzFkNjAzODItMDUyMi00YmFmLWFkN2EtOTM0ZmNkOTdjZTE0OmQxZWVjY2M2LTFhNzktNDE1OS1iNGQxLTMyNTQ4ODNiMDUyMg==
       DATABASE_URL: postgresql+asyncpg://user:password@db:5432/proghelper
     depends_on:
       - db

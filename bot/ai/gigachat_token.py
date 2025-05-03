@@ -2,6 +2,9 @@ import os
 import asyncio
 import base64
 import requests
+import urllib3
+
+urllib3.disable_warnings(urllib3.exceptions.InsecureRequestWarning)
 
 GIGACHAT_AUTH_KEY = os.getenv("GIGACHAT_AUTH_KEY")  # Authorization key (Base64)
 GIGACHAT_SCOPE = os.getenv("GIGACHAT_SCOPE", "GIGACHAT_API_PERS")
@@ -13,16 +16,20 @@ def get_token():
     return _token
 
 def fetch_token_sync():
+    url = GIGACHAT_OAUTH_URL
     headers = {
         "Content-Type": "application/x-www-form-urlencoded",
         "Accept": "application/json",
-        "RqUID": "token-req-12345",  # Можно сгенерировать uuid
+        "RqUID": "f6e70a7e-c02a-4438-9640-99bc452fd15f",  # любой UUID, можно заменить на динамический
         "Authorization": f"Basic {GIGACHAT_AUTH_KEY}"
     }
     data = {"scope": GIGACHAT_SCOPE}
-    resp = requests.post(GIGACHAT_OAUTH_URL, headers=headers, data=data, verify=False)
+    resp = requests.post(url, headers=headers, data=data, verify=False)
+    print(f"[GigaChat] Ответ на запрос токена: {resp.text}")
     resp.raise_for_status()
-    return resp.json()["access_token"]
+    token = resp.json()["access_token"]
+    print(f"[GigaChat] Получен токен: {token}")
+    return token
 
 async def update_token_loop():
     global _token
@@ -33,3 +40,5 @@ async def update_token_loop():
         except Exception as e:
             print(f"[GigaChat] Ошибка обновления токена: {e}")
         await asyncio.sleep(60 * 30)  # 30 минут
+
+_token = fetch_token_sync()

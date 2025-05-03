@@ -22,6 +22,8 @@ TOKEN = os.getenv("BOT_TOKEN")
 async def main():
     logging.basicConfig(level=logging.INFO)
     await init_db()
+    # Запуск фоновой задачи обновления токена GigaChat ДО создания бота
+    asyncio.create_task(update_token_loop())
     bot = Bot(token=TOKEN)
     storage = MemoryStorage()
     dp = Dispatcher(storage=storage)
@@ -31,8 +33,6 @@ async def main():
     dp.include_router(ask_router)
     dp.include_router(chat_router)
     dp.include_router(help_router)
-    # Запуск фоновой задачи обновления токена GigaChat
-    asyncio.create_task(update_token_loop())
     await dp.start_polling(bot)
 
 
