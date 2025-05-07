@@ -3,6 +3,8 @@ from aiogram.types import Message
 from bot.keyboards.main import details_kb, topics_kb, main_menu_kb
 from bot.ai.gigachat_client import ask_gigachat
 from aiogram.utils.markdown import hbold, hcode
+from bot.utils.db import async_session, get_user_model
+from bot.ai.qwen_client import ask_qwen
 
 router = Router()
 
@@ -126,7 +128,12 @@ async def details(msg: Message):
         topic_num = 3
     user_prompt = f"Объясни подробно для новичка: {TOPIC_DETAILS[topic_num]['short']}. Не используй markdown, просто текстовое объяснение с примерами кода как в обычном чате>"
     try:
-        ai_explanation = await ask_gigachat(user_prompt)
+        async with async_session() as session:
+            model = await get_user_model(session, msg.from_user.id)
+        if model == "gigachat":
+            ai_explanation = await ask_gigachat(user_prompt)
+        else:
+            ai_explanation = await ask_qwen(user_prompt, model)
         ai_explanation = ai_explanation.translate(str.maketrans("", "", "#`*"))
         doc = TOPIC_DETAILS[topic_num]["long"].split("Подробнее:")[-1].strip()
         await msg.answer(f"{escape_markdown(ai_explanation)}\n\nПодробнее: {escape_markdown(doc)}", reply_markup=details_kb, parse_mode='MarkdownV2')

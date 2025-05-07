@@ -14,6 +14,7 @@ from bot.handlers.chat import router as chat_router
 from bot.handlers.help import router as help_router
 from aiogram.fsm.storage.memory import MemoryStorage
 from bot.ai.gigachat_token import update_token_loop
+from bot.handlers.settings import router as settings_router
 
 load_dotenv()
 TOKEN = os.getenv("BOT_TOKEN")
@@ -33,6 +34,7 @@ async def main():
     dp.include_router(ask_router)
     dp.include_router(chat_router)
     dp.include_router(help_router)
+    dp.include_router(settings_router)
     await dp.start_polling(bot)
 
 

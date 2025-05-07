@@ -6,6 +6,8 @@ from aiogram.fsm.state import State, StatesGroup
 from aiogram import F
 from aiogram.utils.markdown import hcode
 from bot.ai.gigachat_client import ask_gigachat
+from bot.utils.db import async_session, get_user_model
+from bot.ai.qwen_client import ask_qwen
 
 router = Router()
 
@@ -21,7 +23,12 @@ async def ask_command(msg: Message, state: FSMContext):
 async def process_question(msg: Message, state: FSMContext):
     await msg.answer("Генерирую ответ AI, пожалуйста, подождите...")
     try:
-        answer = await ask_gigachat(msg.text)
+        async with async_session() as session:
+            model = await get_user_model(session, msg.from_user.id)
+        if model == "gigachat":
+            answer = await ask_gigachat(msg.text)
+        else:
+            answer = await ask_qwen(msg.text, model)
         await msg.answer(hcode(answer))
     except Exception as e:
         await msg.answer(f"Ошибка при обращении к AI: {e}")

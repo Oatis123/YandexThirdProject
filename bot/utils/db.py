@@ -1,7 +1,7 @@
 import os
 from sqlalchemy.ext.asyncio import AsyncSession, create_async_engine, async_sessionmaker
 from sqlalchemy.orm import declarative_base, Mapped, mapped_column
-from sqlalchemy import Integer, String, DateTime, ForeignKey, Text, func
+from sqlalchemy import Integer, String, DateTime, ForeignKey, Text, func, select
 
 DATABASE_URL = os.getenv("DATABASE_URL", "postgresql+asyncpg://user:password@localhost:5432/proghelper")
 
@@ -23,6 +23,46 @@ class RequestHistory(Base):
     request: Mapped[str] = mapped_column(Text)
     response: Mapped[str] = mapped_column(Text)
     created_at: Mapped[DateTime] = mapped_column(DateTime, server_default=func.now())
+
+class UserSettings(Base):
+    __tablename__ = "user_settings"
+    id: Mapped[int] = mapped_column(Integer, primary_key=True)
+    user_id: Mapped[int] = mapped_column(Integer, ForeignKey("users.id"), unique=True)
+    model: Mapped[str] = mapped_column(String(64), default="qwen2.5-1.5b")
+
+async def get_user_model(session: AsyncSession, user_id: int) -> str:
+    result = await session.execute(select(UserSettings).where(UserSettings.user_id == user_id))
+    settings = result.scalar_one_or_none()
+    return settings.model if settings else "qwen2.5-1.5b"
+
+async def set_user_model(session: AsyncSession, user_id: int, model: str):
+    result = await session.execute(select(User).where(User.telegram_id == user_id))
+    user = result.scalar_one_or_none()
+    if not user:
+        user = User(telegram_id=user_id)
+        session.add(user)
+        await session.commit()
+        await session.refresh(user)
+    db_user_id = user.id
+    result = await session.execute(select(UserSettings).where(UserSettings.user_id == db_user_id))
+    settings = result.scalar_one_or_none()
+    if settings:
+        settings.model = model
+    else:
+        settings = UserSettings(user_id=db_user_id, model=model)
+        session.add(settings)
+    await session.commit()
+
+async def ensure_user_exists(session: AsyncSession, telegram_id: int, username: str = None):
+    from sqlalchemy import select
+    result = await session.execute(select(User).where(User.telegram_id == telegram_id))
+    user = result.scalar_one_or_none()
+    if not user:
+        user = User(telegram_id=telegram_id, username=username)
+        session.add(user)
+        await session.commit()
+        await session.refresh(user)
+    return user
 
 async def init_db():
     async with engine.begin() as conn:
