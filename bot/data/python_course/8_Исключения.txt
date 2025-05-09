@@ -1,0 +1,7 @@
+Обработка ошибок через try/except.
+
+Пример:
+try:
+    1/0
+except ZeroDivisionError:
+    print('Деление на ноль!')

@@ -1,0 +1,11 @@
+ООП — объектно-ориентированное программирование.
+
+Пример:
+class Animal:
+    def speak(self):
+        print('Звук')
+class Dog(Animal):
+    def speak(self):
+        print('Гав!')
+d = Dog()
+d.speak()

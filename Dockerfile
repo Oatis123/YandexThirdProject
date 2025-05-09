@@ -5,6 +5,6 @@ WORKDIR /app
 COPY . .
 
 RUN pip install --no-cache-dir --upgrade pip \
-    && pip install --no-cache-dir aiogram aiohttp asyncpg sqlalchemy python-dotenv requests
+    && pip install --no-cache-dir aiogram aiohttp asyncpg sqlalchemy python-dotenv requests langchain_ollama
 
 CMD ["python", "-m", "bot.main"]

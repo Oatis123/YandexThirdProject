@@ -28,12 +28,12 @@ class UserSettings(Base):
     __tablename__ = "user_settings"
     id: Mapped[int] = mapped_column(Integer, primary_key=True)
     user_id: Mapped[int] = mapped_column(Integer, ForeignKey("users.id"), unique=True)
-    model: Mapped[str] = mapped_column(String(64), default="qwen2.5-1.5b")
+    model: Mapped[str] = mapped_column(String(64), default="qwen2.5:1.5b")
 
 async def get_user_model(session: AsyncSession, user_id: int) -> str:
     result = await session.execute(select(UserSettings).where(UserSettings.user_id == user_id))
     settings = result.scalar_one_or_none()
-    return settings.model if settings else "qwen2.5-1.5b"
+    return settings.model if settings else "qwen2.5:1.5b"
 
 async def set_user_model(session: AsyncSession, user_id: int, model: str):
     result = await session.execute(select(User).where(User.telegram_id == user_id))

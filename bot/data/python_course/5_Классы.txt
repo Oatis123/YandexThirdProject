@@ -1,0 +1,8 @@
+Классы — основа ООП.
+
+Пример:
+class Person:
+    def __init__(self, name):
+        self.name = name
+p = Person('Вася')
+print(p.name)

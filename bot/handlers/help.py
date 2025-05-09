@@ -1,7 +1,7 @@
 from aiogram import Router
 from aiogram.types import Message
 from aiogram.filters import Command
-from bot.keyboards.main import main_menu_kb
+from bot.keyboards.main import main_menu_inline_kb
 
 router = Router()
 
@@ -23,5 +23,5 @@ async def help_keyboard(msg: Message):
         "- 💬 Чат с AI — свободное общение с нейросетью по программированию\n"
         "- ⬅️ В меню — возврат в главное меню\n\n"
         "Для возврата в меню используйте кнопку ⬅️ В меню.",
-        reply_markup=main_menu_kb
+        reply_markup=main_menu_inline_kb()
     )

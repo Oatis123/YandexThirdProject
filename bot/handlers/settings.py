@@ -1,7 +1,7 @@
 from aiogram import Router, F
 from aiogram.types import Message, CallbackQuery
 from aiogram.fsm.context import FSMContext
-from bot.keyboards.main import main_menu_kb, main_menu_inline_kb, get_models_inline_kb
+from bot.keyboards.main import main_menu_inline_kb, get_models_inline_kb
 from bot.utils.db import async_session, get_user_model, set_user_model, ensure_user_exists
 from sqlalchemy.ext.asyncio import AsyncSession
 

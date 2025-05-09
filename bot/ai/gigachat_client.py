@@ -1,6 +1,7 @@
 import os
 import aiohttp
 from bot.ai.gigachat_token import get_token
+import requests
 
 GIGACHAT_URL = os.getenv("GIGACHAT_URL", "https://gigachat.devices.sberbank.ru/api/v1/chat/completions")
 

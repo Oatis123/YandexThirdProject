@@ -24,12 +24,16 @@ def fetch_token_sync():
         "Authorization": f"Basic {GIGACHAT_AUTH_KEY}"
     }
     data = {"scope": GIGACHAT_SCOPE}
-    resp = requests.post(url, headers=headers, data=data, verify=False)
-    print(f"[GigaChat] Ответ на запрос токена: {resp.text}")
-    resp.raise_for_status()
-    token = resp.json()["access_token"]
-    print(f"[GigaChat] Получен токен: {token}")
-    return token
+    try:
+        resp = requests.post(url, headers=headers, data=data, verify=False, timeout=10)
+        print(f"[GigaChat] Ответ на запрос токена: {resp.text}")
+        resp.raise_for_status()
+        token = resp.json()["access_token"]
+        print(f"[GigaChat] Получен токен: {token}")
+        return token
+    except Exception as e:
+        print(f"[GigaChat] Ошибка получения токена: {e}")
+        return None
 
 async def update_token_loop():
     global _token
@@ -41,4 +45,7 @@ async def update_token_loop():
             print(f"[GigaChat] Ошибка обновления токена: {e}")
         await asyncio.sleep(60 * 30)  # 30 минут
 
-_token = fetch_token_sync()
+try:
+    _token = fetch_token_sync()
+except Exception as e:
+    print(f"[GigaChat] Ошибка инициализации токена: {e}")

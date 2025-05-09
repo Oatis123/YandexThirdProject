@@ -1,0 +1,5 @@
+Работа с файлами в Python.
+
+Пример:
+with open('file.txt', 'w') as f:
+    f.write('Hello!')

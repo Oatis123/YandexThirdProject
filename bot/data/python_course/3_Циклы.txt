@@ -1,0 +1,11 @@
+Циклы позволяют повторять действия.
+
+Пример for:
+for i in range(3):
+    print(i)
+
+Пример while:
+i = 0
+while i < 3:
+    print(i)
+    i += 1
