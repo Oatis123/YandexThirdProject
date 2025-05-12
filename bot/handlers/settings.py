@@ -1,7 +1,7 @@
 from aiogram import Router, F
 from aiogram.types import Message, CallbackQuery
 from aiogram.fsm.context import FSMContext
-from bot.keyboards.main import main_menu_inline_kb, get_models_inline_kb
+from bot.keyboards.main import main_menu_inline_kb, main_menu_reply_kb, get_models_inline_kb
 from bot.utils.db import async_session, get_user_model, set_user_model, ensure_user_exists
 from sqlalchemy.ext.asyncio import AsyncSession
 
@@ -47,5 +47,12 @@ async def set_model_callback(call: CallbackQuery):
 async def back_to_menu_callback(call: CallbackQuery):
     await call.message.edit_text(
         "Главное меню:",
-        reply_markup=main_menu_inline_kb
+        reply_markup=main_menu_inline_kb()
+    )
+
+@router.message(F.text == "⬅️ В меню")
+async def back_to_menu_reply(msg: Message, state: FSMContext):
+    await msg.answer(
+        "Главное меню:",
+        reply_markup=main_menu_reply_kb()
     )

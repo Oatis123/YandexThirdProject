@@ -30,12 +30,20 @@ class UserSettings(Base):
     user_id: Mapped[int] = mapped_column(Integer, ForeignKey("users.id"), unique=True)
     model: Mapped[str] = mapped_column(String(64), default="qwen2.5:1.5b")
 
-async def get_user_model(session: AsyncSession, user_id: int) -> str:
-    result = await session.execute(select(UserSettings).where(UserSettings.user_id == user_id))
+async def get_user_model(session: AsyncSession, telegram_id: int) -> str:
+    from sqlalchemy import select
+    # Получаем id пользователя по telegram_id
+    result = await session.execute(select(User).where(User.telegram_id == telegram_id))
+    user = result.scalar_one_or_none()
+    if not user:
+        return "qwen2.5:1.5b"
+    db_user_id = user.id
+    result = await session.execute(select(UserSettings).where(UserSettings.user_id == db_user_id))
     settings = result.scalar_one_or_none()
     return settings.model if settings else "qwen2.5:1.5b"
 
 async def set_user_model(session: AsyncSession, user_id: int, model: str):
+    # user_id здесь — telegram_id, нужно получить id из таблицы users
     result = await session.execute(select(User).where(User.telegram_id == user_id))
     user = result.scalar_one_or_none()
     if not user:

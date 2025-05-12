@@ -1,4 +1,4 @@
-from aiogram.types import InlineKeyboardMarkup, InlineKeyboardButton
+from aiogram.types import InlineKeyboardMarkup, InlineKeyboardButton, ReplyKeyboardMarkup, KeyboardButton
 
 def main_menu_inline_kb():
     return InlineKeyboardMarkup(
@@ -10,9 +10,20 @@ def main_menu_inline_kb():
         ]
     )
 
+def main_menu_reply_kb():
+    return ReplyKeyboardMarkup(
+        keyboard=[
+            [KeyboardButton(text="📚 Темы")],
+            [KeyboardButton(text="💬 Чат с AI")],
+            [KeyboardButton(text="ℹ️ Помощь")],
+            [KeyboardButton(text="⚙️ Настройки")],
+        ],
+        resize_keyboard=True
+    )
+
 def get_models_inline_kb(selected: str = None):
     models = [
-        ("Qwen 1.5B", "qwen2.5-1.5b"),
+        ("Qwen 1.5B", "qwen2.5:1.5b"),
         ("GigaChat", "gigachat"),
     ]
     buttons = [
